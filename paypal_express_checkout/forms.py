@@ -139,7 +139,7 @@ class DoExpressCheckoutForm(PayPalFormMixin, forms.Form):
             return redirect(self.get_error_url())
 
 
-class SetExpressCheckoutFormMixin(PayPalFormMixin, forms.Form):
+class SetExpressCheckoutFormMixin(PayPalFormMixin):
     """
     Base form class for all forms invoking the ``SetExpressCheckout`` PayPal
     API operation, providing the general method skeleton.
@@ -278,7 +278,7 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin, forms.Form):
             return redirect(self.get_error_url())
 
 
-class SetExpressCheckoutItemForm(SetExpressCheckoutFormMixin):
+class SetExpressCheckoutItemForm(SetExpressCheckoutFormMixin, forms.Form):
     """
     Takes the input from the ``SetExpressCheckoutView``, validates it and
     takes care of the PayPal API operations.
