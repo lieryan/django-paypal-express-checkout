@@ -10,7 +10,11 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.timezone import now
+try:
+    from django.utils.timezone import now
+except ImportError:
+    from datetime import datetime
+    now = datetime.now
 from django.utils.translation import ugettext_lazy as _
 
 from .constants import PAYMENT_STATUS, PAYPAL_DEFAULTS
