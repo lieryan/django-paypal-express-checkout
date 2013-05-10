@@ -38,7 +38,7 @@ class PurchasedItemAdmin(admin.ModelAdmin):
         'date', 'user', 'transaction', 'item', 'quantity', 'subtotal', 'total',
         'status', ]
     list_filter = [
-        'transaction__status', 'item', ]
+        'transaction__status', 'item_type', 'item_id', ]
     search_fields = [
         'transaction__transaction_id', 'user__email', ]
 

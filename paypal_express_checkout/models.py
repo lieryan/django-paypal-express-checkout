@@ -130,10 +130,19 @@ class PurchasedItem(models.Model):
         verbose_name=_('Transaction'),
     )
 
-    item = models.ForeignKey(
-        Item,
+    item_type = models.ForeignKey(
+        ContentType,
+        blank=True, null=True,
+    )
+
+    item_id = models.PositiveIntegerField(
+        blank=True, null=True,
         verbose_name=_('Item'),
-        null=True, blank=True,
+    )
+
+    item = generic.GenericForeignKey(
+        'item_type',
+        'item_id',
     )
 
     quantity = models.PositiveIntegerField(
