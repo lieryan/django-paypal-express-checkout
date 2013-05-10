@@ -54,8 +54,8 @@ class PayPalFormMixin(object):
 
     def get_cancel_url(self):
         """Returns the paypal cancel url."""
-        return settings.HOSTNAME + reverse(
-            'paypal_canceled', kwargs=self.get_url_kwargs())
+        return urlparse.urljoin(settings.HOSTNAME, reverse(
+            'paypal_canceled', kwargs=self.get_url_kwargs()))
 
     def get_error_url(self):
         """Returns the url of the payment error page."""
@@ -63,12 +63,12 @@ class PayPalFormMixin(object):
 
     def get_notify_url(self):
         """Returns the notification (ipn) url."""
-        return settings.HOSTNAME + reverse('ipn_listener')
+        return urlparse.urljoin(settings.HOSTNAME, reverse('ipn_listener'))
 
     def get_return_url(self):
         """Returns the paypal return url."""
-        return settings.HOSTNAME + reverse(
-            'paypal_confirm', kwargs=self.get_url_kwargs())
+        return urlparse.urljoin(settings.HOSTNAME, reverse(
+            'paypal_confirm', kwargs=self.get_url_kwargs()))
 
     def get_success_url(self):
         """Returns the url of the payment success page."""
