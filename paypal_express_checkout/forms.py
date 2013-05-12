@@ -90,6 +90,38 @@ class PayPalFormMixin(object):
         return payment_error
 
 
+class GetExpressCheckoutDetailsForm(PayPalFormMixin, forms.Form):
+    """
+    Takes the input from the ``GetExpressCheckoutDetails``, validates it and
+    takes care of the PayPal API operations.
+
+    """
+
+    token = forms.CharField()
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(GetExpressCheckoutDetailsForm, self).__init__(*args, **kwargs)
+        try:
+            self.transaction = PaymentTransaction.objects.get(
+                user=user, transaction_id=self.data['token'])
+        except PaymentTransaction.DoesNotExist:
+            raise Http404
+
+    def get_post_data(self):
+        """Creates the post data dictionary to send to PayPal."""
+        post_data = PAYPAL_DEFAULTS
+        post_data.update({
+            'METHOD': 'GetExpressCheckoutDetails',
+            'TOKEN': self.transaction.transaction_id,
+        })
+        return post_data
+
+    def get_details(self):
+        post_data = self.get_post_data()
+        parsed_response = self.call_paypal(post_data)
+        return parsed_response
+
 class DoExpressCheckoutForm(PayPalFormMixin, forms.Form):
     """
     Takes the input from the ``DoExpressCheckoutView``, validates it and
