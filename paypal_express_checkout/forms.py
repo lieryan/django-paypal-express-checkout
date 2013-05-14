@@ -120,7 +120,11 @@ class GetExpressCheckoutDetailsForm(PayPalFormMixin, forms.Form):
     def get_details(self):
         post_data = self.get_post_data()
         parsed_response = self.call_paypal(post_data)
-        return parsed_response
+        if parsed_response.get('ACK')[0] == 'Success':
+            return parsed_response
+        elif parsed_response.get('ACK')[0] == 'Failure':
+            self.log_error(parsed_response, self.transaction)
+            raise PaypalExpressException(parsed_response)
 
 class DoExpressCheckoutForm(PayPalFormMixin, forms.Form):
     """
