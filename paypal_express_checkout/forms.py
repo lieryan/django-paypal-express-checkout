@@ -18,6 +18,7 @@ except ImportError:
 from django.utils.translation import ugettext_lazy as _
 
 from .constants import PAYMENT_STATUS, PAYPAL_DEFAULTS
+from .exceptions import PaypalExpressException
 from .models import (
     Item,
     PaymentTransaction,
@@ -28,7 +29,6 @@ from .settings import API_URL, LOGIN_URL
 
 
 logger = logging.getLogger(__name__)
-
 
 class PayPalFormMixin(object):
     """Common methods for the PayPal forms."""
@@ -269,7 +269,7 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
         """
         return
 
-    def set_checkout(self):
+    def process_set_checkout(self):
         """
         Calls PayPal to make the 'SetExpressCheckout' procedure.
 
@@ -304,11 +304,24 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
                 if item.pk:
                     item_kwargs.update({'item': item, })
                 PurchasedItem.objects.create(**item_kwargs)
-            return redirect(LOGIN_URL + token)
+            return transaction
         elif parsed_response.get('ACK')[0] == 'Failure':
+            raise PaypalExpressException(response=parsed_response)
+    def set_checkout(self):
+        """
+        Calls PayPal to make the 'SetExpressCheckout' procedure.
+
+        :param items: A list of ``Item`` objects.
+
+        """
+        try:
+            transaction = self.process_set_checkout()
+            token = transaction.transaction_id
+            return redirect(LOGIN_URL + token)
+        except PaypalExpressException as e:
+            parsed_response = e.response 
             self.log_error(parsed_response)
             return redirect(self.get_error_url())
-
 
 class SetExpressCheckoutItemForm(SetExpressCheckoutFormMixin, forms.Form):
     """
