@@ -110,7 +110,7 @@ class GetExpressCheckoutDetailsForm(PayPalFormMixin, forms.Form):
 
     def get_post_data(self):
         """Creates the post data dictionary to send to PayPal."""
-        post_data = PAYPAL_DEFAULTS
+        post_data = dict(PAYPAL_DEFAULTS)
         post_data.update({
             'METHOD': 'GetExpressCheckoutDetails',
             'TOKEN': self.transaction.transaction_id,
@@ -147,7 +147,7 @@ class DoExpressCheckoutForm(PayPalFormMixin, forms.Form):
 
     def get_post_data(self):
         """Creates the post data dictionary to send to PayPal."""
-        post_data = PAYPAL_DEFAULTS
+        post_data = dict(PAYPAL_DEFAULTS)
         post_data.update({
             'METHOD': 'DoExpressCheckoutPayment',
             'TOKEN': self.transaction.transaction_id,
@@ -226,7 +226,7 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
 
     def get_post_data(self, item_quantity_list):
         """Creates the post data dictionary to send to PayPal."""
-        post_data = PAYPAL_DEFAULTS
+        post_data = dict(PAYPAL_DEFAULTS)
         total_value = 0
         item_index = 0
         for item, quantity in item_quantity_list:
