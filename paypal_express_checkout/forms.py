@@ -309,6 +309,7 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
                     item_kwargs.update({'item': item, })
                 PurchasedItem.objects.create(**item_kwargs)
             return transaction
+        self.log_error(parsed_response)
         raise PaypalExpressException(response=parsed_response)
     def set_checkout(self):
         """
@@ -323,7 +324,6 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
             return redirect(LOGIN_URL + token)
         except PaypalExpressException as e:
             parsed_response = e.response 
-            self.log_error(parsed_response)
             return redirect(self.get_error_url())
 
 class SetExpressCheckoutItemForm(SetExpressCheckoutFormMixin, forms.Form):
