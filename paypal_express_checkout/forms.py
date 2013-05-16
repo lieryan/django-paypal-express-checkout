@@ -309,8 +309,7 @@ class SetExpressCheckoutFormMixin(PayPalFormMixin):
                     item_kwargs.update({'item': item, })
                 PurchasedItem.objects.create(**item_kwargs)
             return transaction
-        elif parsed_response.get('ACK')[0] == 'Failure':
-            raise PaypalExpressException(response=parsed_response)
+        raise PaypalExpressException(response=parsed_response)
     def set_checkout(self):
         """
         Calls PayPal to make the 'SetExpressCheckout' procedure.
